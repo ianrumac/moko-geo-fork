@@ -1,13 +1,15 @@
 plugins {
     id("android-app-convention")
-    id("detekt-convention")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
     buildFeatures.dataBinding = true
 
     defaultConfig {
-        applicationId = "dev.icerock.moko.samples.permissions"
+
+        applicationId = "dev.icerock.moko.samples.geo"
 
         versionCode = 1
         versionName = "0.1.0"
@@ -16,7 +18,7 @@ android {
 
 dependencies {
     implementation(libs.appCompat)
-    implementation(libs.material)
+    implementation(libs.playServicesLocation)
 
     implementation(projects.sample.mppLibrary)
 }

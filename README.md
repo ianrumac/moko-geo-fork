@@ -1,14 +1,13 @@
-![moko-permissions](img/logo.png)  
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/permissions) ](https://repo1.maven.org/maven2/dev/icerock/moko/permissions) ![kotlin-version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=dev.icerock.moko&name=permissions)
+![moko-mvvm](https://user-images.githubusercontent.com/5010169/71337878-0e0d0f80-2580-11ea-8ac5-69a132334960.png)  
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/geo) ](https://repo1.maven.org/maven2/dev/icerock/moko/geo) ![kotlin-version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=dev.icerock.moko&name=geo)
 
-# Mobile Kotlin runtime permissions multiplatform controller
-**moko-permissions** - Kotlin MultiPlatform library for providing runtime permissions on iOS & Android.
+# Mobile Kotlin geolocation module
+This is a Kotlin Multiplatform library that provides geolocation to common code.
 
 ## Table of Contents
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [List of supported permissions](#list-of-supported-permissions)
 - [Usage](#usage)
 - [Samples](#samples)
 - [Set Up Locally](#set-up-locally)
@@ -16,104 +15,95 @@
 - [License](#license)
 
 ## Features
-- **Permission** - enumeration with primary types of device permissions
-- **PermissionsController** - handler for runtime permission requests can be used in the common code with lifecycle safety for Android
-- **DeniedException** and **DeniedAlwaysException** - exceptions to handle user denial of permissions
+- **Geolocation tracking** - track user geolocation from common code;
 
 ## Requirements
-- Gradle version 6.8+
+- Gradle version 6.0+
 - Android API 16+
-- iOS version 11.0+
+- iOS version 9.0+
 
 ## Installation
-root **build.gradle**
+root build.gradle  
 ```groovy
 allprojects {
     repositories {
-      mavenCentral()
+        mavenCentral()
     }
 }
 ```
 
-project **build.gradle**
+project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:permissions:0.10.2")
-    commonTestImplementation("dev.icerock.moko:permissions-test:0.10.2")
+    commonMainApi("dev.icerock.moko:geo:0.4.0")
+    androidMainImplementation("com.google.android.gms:play-services-location:18.0.0")
 }
 ```
-
-## List of supported permissions
-
-The full list can be found in `dev.icerock.moko.permissions.Permission` enum.
-
-* Camera: **Permission.CAMERA**
-* Gallery: **Permission.GALLERY**
-* Storage read: **Permission.STORAGE**
-* Storage write: **Permission.WRITE_STORAGE**
-* Fine location: **Permission.LOCATION**
-* Coarse location: **Permission.COARSE_LOCATION**
-* Remote notifications: **Permission.REMOTE_NOTIFICATION**
-* Audio recording: **Permission.RECORD_AUDIO**
 
 ## Usage
-
-Common code:
+in common code:
 ```kotlin
-class ViewModel(val permissionsController: PermissionsController): ViewModel() {
-    fun onPhotoPressed() {
+class TrackerViewModel(
+    val locationTracker: LocationTracker
+) : ViewModel() {
+
+    init {
         viewModelScope.launch {
-            try {
-                permissionsController.providePermission(Permission.GALLERY)
-                // Permission has been granted successfully.
-            } catch(deniedAlways: DeniedAlwaysException) {
-                // Permission is always denied.
-            } catch(denied: DeniedException) {
-                // Permission was denied.
-            }
+            locationTracker.getLocationsFlow()
+                .distinctUntilChanged()
+                .collect { println("new location: $it") }
         }
     }
-}
-```
 
-Android:
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-        
-    val viewModel = getViewModel {
-        // Pass the platform implementation of the permission controller to a common code.
-        ViewModel(PermissionsController())
+    fun onStartPressed() {
+        viewModelScope.launch { locationTracker.startTracking() }
     }
-    
-    // Binds the permissions controller to the activity lifecycle.
-    viewModel.permissionsController.bind(lifecycle, supportFragmentManager)
+
+    fun onStopPressed() {
+        locationTracker.stopTracking()
+    }
 }
 ```
 
-iOS:
+In Android:
+```kotlin
+// create ViewModel
+val locationTracker = LocationTracker(
+    permissionsController = PermissionsController(applicationContext = applicationContext)
+)
+val viewModel = TrackerViewModel(locationTracker)
+
+// bind tracker to lifecycle
+viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
+```
+
+In iOS:
 ```swift
-// Just pass the platform implementation of the permission controller to a common code.
-let viewModel = ViewModel(permissionsController: PermissionsController())
+let viewModel = TrackerViewModel(
+    locationTracker: LocationTracker(
+        permissionsController: PermissionsController(),
+        accuracy: kCLLocationAccuracyBest
+    )
+)
 ```
 
 ## Samples
-More examples can be found in the [sample directory](sample).
+Please see more examples in the [sample directory](sample).
 
 ## Set Up Locally 
-- In [permissions directory](permissions) contains `permissions` library;
-- In [sample directory](sample) contains samples on android, ios & mpp-library connected to apps.
+- The [geo directory](geo) contains the `geo` library;
+- In [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps.
 
 ## Contributing
-All development (both new features and bug fixes) is performed in `develop` branch. This way `master` sources always contain sources of the most recently released version. Please send PRs with bug fixes to `develop` branch. Fixes to documentation in markdown files are an exception to this rule. They are updated directly in `master`.
+All development (both new features and bug fixes) is performed in the `develop` branch. This way `master` always contains the sources of the most recently released version. Please send PRs with bug fixes to the `develop` branch. Documentation fixes in the markdown files are an exception to this rule. They are updated directly in `master`.
 
-The `develop` branch is pushed to `master` during release.
+The `develop` branch is pushed to `master` on release.
 
-More detailed guide for contributers see in [contributing guide](CONTRIBUTING.md).
+For more details on contributing please see the [contributing guide](CONTRIBUTING.md).
 
 ## License
         
-    Copyright 2019 IceRock MAG Inc
+    Copyright 2019 IceRock MAG Inc.
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

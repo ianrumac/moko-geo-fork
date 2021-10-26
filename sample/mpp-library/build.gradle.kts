@@ -1,7 +1,3 @@
-/*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
- */
-
 plugins {
     id("com.android.library")
     id("android-base-convention")
@@ -18,17 +14,15 @@ kotlin {
 
 dependencies {
     commonMainImplementation(libs.coroutines)
-
-    commonMainApi(libs.mokoMvvmCore)
-    commonMainApi(projects.permissions)
-
     "androidMainImplementation"(libs.lifecycle)
-
-    commonTestImplementation(libs.mokoMvvmTest)
-    commonTestImplementation(projects.permissionsTest)
+    "androidMainImplementation"(libs.playServicesLocation)
+    commonMainApi(projects.geo)
+    commonMainApi(libs.mokoMvvm)
+    commonMainApi(libs.mokoPermissions)
+    commonMainApi(libs.mokoResources)
 }
 
 framework {
-    export(projects.permissions)
-    export(libs.mokoMvvmCore)
+    export(projects.geo)
+    export(libs.mokoPermissions)
 }

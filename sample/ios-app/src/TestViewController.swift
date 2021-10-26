@@ -1,41 +1,41 @@
-//
-//  Created by Aleksey Mikhailov on 23/06/2019.
-//  Copyright © 2019 IceRock Development. All rights reserved.
-//
+/*
+* Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+*/
 
 import UIKit
 import MultiPlatformLibrary
+import CoreLocation
 
 class TestViewController: UIViewController {
-    
-    @IBOutlet private var label: UILabel!
-    
-    private var viewModel: SampleViewModel!
+    @IBOutlet var textLocationLabel: UILabel!
+    @IBOutlet var textExtendedLocationLabel: UILabel!
+
+    private var viewModel: TrackerViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        label.text = "wait press..."
+        viewModel = TrackerViewModel(
+            locationTracker: LocationTracker(
+                permissionsController: PermissionsController(),
+                accuracy: kCLLocationAccuracyBest
+            )
+        )
         
-        viewModel = SampleViewModel(eventsDispatcher: EventsDispatcher(listener: self),
-                                    permissionsController: PermissionsController())
+        viewModel.textLocation.addObserver { [weak self] text in
+            self?.textLocationLabel.text = text as String?
+        }
+        
+        viewModel.textExtendedLocation.addObserver { [weak self] text in
+            self?.textExtendedLocationLabel.text = text as String?
+        }
     }
     
-    @IBAction func onPermissionPressed() {
-        viewModel.onRequestPermissionButtonPressed()
-    }
-}
-
-extension TestViewController: SampleViewModelEventListener {
-    func onSuccess() {
-        label.text = "success granted"
+    @IBAction func onStartPressed() {
+        viewModel.onStartPressed()
     }
     
-    func onDenied(exception: DeniedException) {
-        label.text = "denied" // on ios is impossible
-    }
-    
-    func onDeniedAlways(exception: DeniedAlwaysException) {
-        label.text = "denied always"
+    @IBAction func onStopPressed() {
+        viewModel.onStopPressed()
     }
 }
