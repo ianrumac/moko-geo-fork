@@ -17,6 +17,6 @@ jobs:
       - name: Publish
         run: ./gradlew publish --no-configure-on-demand --no-daemon
         env:
-          ORG_GRADLE_PROJECT_githubUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_githubPassword: ${{ github.token }}
+          GH_USER: ${{ secrets.user }}
+          GH_TOKEN: ${{ secrets.token }}
 

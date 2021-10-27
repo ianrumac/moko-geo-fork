@@ -30,8 +30,8 @@ publishing {
             name = "github"
             url = uri("https://maven.pkg.github.com/ianrumac/moko-geo")
             credentials {
-                username = (project.findProperty("githubUsername")?:"").toString()
-                password = (project.findProperty("githubToken")?: "").toString()
+                username = System.getenv("GH_USER")
+                password = System.getenv("GH_TOKEN")
 
             }
         }
