@@ -4,6 +4,7 @@ on:
 
 jobs:
   release:
+    environment: github
     runs-on: macos-latest
     steps:
       - name: Checkout code
