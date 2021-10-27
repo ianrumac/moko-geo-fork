@@ -14,7 +14,7 @@ buildscript {
 }
 allprojects {
     plugins.withId("org.gradle.maven-publish") {
-        group = "com.lotus.moko-fork"
+        group = "com.lotus.moko.fork"
         version = libs.versions.mokoGeoVersion.get()
     }
 }

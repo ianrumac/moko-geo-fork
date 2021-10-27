@@ -11,7 +11,7 @@ plugins {
     id("publication-convention")
 }
 
-group = "com.lotus.moko-fork"
+group = "com.lotus.moko.fork"
 version = libs.versions.mokoGeoVersion.get()
 
 dependencies {
