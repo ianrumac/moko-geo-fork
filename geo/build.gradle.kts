@@ -1,3 +1,5 @@
+import java.lang.System.getenv
+
 /*
  * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
@@ -9,7 +11,7 @@ plugins {
     id("publication-convention")
 }
 
-group = "dev.icerock.moko"
+group = "com.lotus.moko-fork"
 version = libs.versions.mokoGeoVersion.get()
 
 dependencies {
@@ -21,4 +23,17 @@ dependencies {
     "androidMainImplementation"(libs.lifecycle)
     "androidMainImplementation"(libs.playServicesLocation)
 }
+
+getenv("GITHUB_REPOSITORY")?.let {
+    publishing {
+        repositories {
+            maven {
+                name = "github"
+                url = uri("https://maven.pkg.github.com/$it")
+                credentials(PasswordCredentials::class)
+            }
+        }
+    }
+}
+
 

@@ -4,6 +4,7 @@
 
 package dev.icerock.moko.geo
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.fragment.app.FragmentManager
@@ -37,6 +38,7 @@ actual class LocationTracker(
     private val extendedLocationsChannel = Channel<ExtendedLocation>(Channel.BUFFERED)
     private val trackerScope = CoroutineScope(Dispatchers.Main)
 
+    @SuppressLint("MissingPermission")
     fun bind(lifecycle: Lifecycle, context: Context, fragmentManager: FragmentManager) {
 
         locationProviderClient = FusedLocationProviderClient(context)
@@ -107,6 +109,7 @@ actual class LocationTracker(
         }
     }
 
+    @SuppressLint("MissingPermission")
     actual suspend fun startTracking() {
         isStarted = true
         locationProviderClient?.requestLocationUpdates(locationRequest, this, null)
