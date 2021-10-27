@@ -28,7 +28,7 @@ publishing {
     repositories {
         maven {
             name = "github"
-            url = uri("https://maven.pkg.github.com/ianrumac/moko-geo")
+            url = uri("https://maven.pkg.github.com/ianrumac/moko-geo-fork")
             credentials {
                 username = getenv("GH_USER")
                 password = getenv("GH_TOKEN")
