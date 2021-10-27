@@ -24,13 +24,15 @@ dependencies {
     "androidMainImplementation"(libs.playServicesLocation)
 }
 
-getenv("GITHUB_REPOSITORY")?.let {
-    publishing {
-        repositories {
-            maven {
-                name = "github"
-                url = uri("https://maven.pkg.github.com/$it")
-                credentials(PasswordCredentials::class)
+publishing {
+    repositories {
+        maven {
+            name = "github"
+            url = uri("https://maven.pkg.github.com/ianrumac/moko-geo")
+            credentials {
+                username = (project.findProperty("githubUsername")?:"").toString()
+                password = (project.findProperty("githubToken")?: "").toString()
+
             }
         }
     }
