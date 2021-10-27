@@ -17,6 +17,6 @@ jobs:
       - name: Publish
         run: ./gradlew publish --no-configure-on-demand --no-daemon
         env:
-          GH_USER: ${{ secrets.user }}
-          GH_TOKEN: ${{ secrets.token }}
+          GH_USER: ${{ secrets.GH_USER }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
